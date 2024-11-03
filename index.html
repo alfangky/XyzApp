@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Social Media App</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+      integrity="sha384-k6RqeWeci5ZR/Lv4MR0sA0FfDOMF2FSSldGpC2F8C2R46F8S3A6FjDP+W9Y2V4"
+      crossorigin="anonymous"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          sans-serif;
+      }
+
+      :root {
+        --primary-color: #1da1f2;
+        --background-color: #f5f8fa;
+        --border-color: #e1e8ed;
+        --text-color: #14171a;
+        --secondary-text: #657786;
+      }
+
+      body {
+        background-color: var(--background-color);
+        color: var(--text-color);
+      }
+
+      .navbar {
+        position: fixed;
+        top: 0;
+        width: 100%;
+        background-color: rgba(255, 255, 255, 0.95);
+        padding: 0.8rem;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+        backdrop-filter: blur(10px);
+      }
+
+      .nav-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .nav-brand {
+        font-size: 1.3rem;
+        font-weight: bold;
+        color: var(--primary-color);
+      }
+
+      .nav-menu {
+        display: flex;
+        gap: 2rem;
+      }
+
+      .nav-item {
+        cursor: pointer;
+        color: var(--secondary-text);
+        text-decoration: none;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .nav-item:hover {
+        color: var(--primary-color);
+      }
+
+      .profile-section {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .profile-pic {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        object-fit: cover;
+        cursor: pointer;
+      }
+
+      .main-container {
+        max-width: 600px;
+        margin: 70px auto 0;
+        padding: 1rem;
+      }
+
+      .post-form {
+        background: white;
+        padding: 1rem;
+        border-radius: 16px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        margin-bottom: 2rem;
+      }
+
+      .post-form-header {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1rem;
+      }
+
+      .post-input {
+        width: 100%;
+        min-height: 80px;
+        padding: 0.8rem;
+        border: none;
+        resize: none;
+        font-size: 1.1rem;
+        outline: none;
+      }
+
+      .media-preview {
+        max-width: 100%;
+        margin-bottom: 1rem;
+        display: none;
+        position: relative;
+      }
+
+      .media-preview img,
+      .media-preview video {
+        max-width: 100%;
+        border-radius: 16px;
+        max-height: 400px;
+        object-fit: contain;
+      }
+
+      .remove-media {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: rgba(0, 0, 0, 0.7);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .button-group {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-top: 1px solid var(--border-color);
+        padding-top: 1rem;
+      }
+
+      .file-input {
+        display: none;
+      }
+
+      .upload-btn,
+      .post-btn {
+        padding: 0.6rem 1.2rem;
+        border: none;
+        border-radius: 20px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: background-color 0.2s;
+      }
+
+      .upload-btn {
+        background-color: transparent;
+        color: var(--primary-color);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .upload-btn:hover {
+        background-color: rgba(29, 161, 242, 0.1);
+      }
+
+      .post-btn {
+        background-color: var(--primary-color);
+        color: white;
+      }
+
+      .post-btn:hover {
+        background-color: #1a91da;
+      }
+
+      .post-btn:disabled {
+        background-color: #9bd1f9;
+        cursor: not-allowed;
+      }
+
+      .posts-container {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .post {
+        background: white;
+        padding: 1rem;
+        border-radius: 16px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      }
+
+      .post-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 0.8rem;
+      }
+
+      .post-user-info {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .verified-badge {
+        color: var(--primary-color);
+        font-size: 1.2rem;
+        margin-left: 0.3rem; /* Optional for spacing */
+      }
+
+      .post-timestamp {
+        color: var(--secondary-text);
+        font-size: 0.9rem;
+        margin-left: auto;
+      }
+
+      .post-content {
+        margin-bottom: 1rem;
+        font-size: 1.1rem;
+        line-height: 1.4;
+      }
+
+      .post-media {
+        max-width: 100%;
+        border-radius: 16px;
+        margin-bottom: 1rem;
+        overflow: hidden;
+      }
+
+      .post-media img,
+      .post-media video {
+        max-width: 100%;
+        border-radius: 16px;
+      }
+
+      .post-actions {
+        display: flex;
+        gap: 2rem;
+        color: var(--secondary-text);
+        border-top: 1px solid var(--border-color);
+        padding-top: 0.8rem;
+      }
+
+      .action-btn {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+        transition: color 0.2s;
+        font-size: 0.9rem;
+      }
+
+      .action-btn:hover {
+        color: var(--primary-color);
+      }
+
+      .action-btn.liked {
+        color: #e0245e;
+      }
+
+      .profile-modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 2000;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .profile-modal-content {
+        background: white;
+        padding: 2rem;
+        border-radius: 16px;
+        width: 90%;
+        max-width: 400px;
+      }
+
+      .profile-modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+      }
+
+      .close-modal {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: var(--secondary-text);
+      }
+
+      .profile-preview {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        margin: 0 auto 1rem;
+        display: block;
+        object-fit: cover;
+      }
+
+      .change-photo-btn {
+        display: block;
+        width: 100%;
+        padding: 0.8rem;
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: 20px;
+        cursor: pointer;
+        font-weight: bold;
+        margin-top: 1rem;
+      }
+
+      @media (max-width: 768px) {
+        .navbar {
+          padding: 0.6rem;
+        }
+
+        .nav-menu {
+          position: fixed;
+          bottom: 0;
+          left: 0;
+          width: 100%;
+          background: white;
+          padding: 0.8rem;
+          display: flex;
+          justify-content: space-around;
+          box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-item span {
+          display: none;
+        }
+
+        .main-container {
+          margin: 60px auto 70px;
+          padding: 0.5rem;
+        }
+
+        .post-form,
+        .post {
+          border-radius: 12px;
+        }
+
+        .action-btn span {
+          display: none;
+        }
+
+        .post-actions {
+          justify-content: space-around;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar">
+      <div class="nav-content">
+        <div class="nav-brand">XyzApp</div>
+        <div class="profile-section">
+          <img
+            src="/api/placeholder/32/32"
+            alt="Profile"
+            class="profile-pic"
+            id="userProfilePic"
+          />
+        </div>
+      </div>
+    </nav>
+
+    <div class="nav-menu">
+      <a href="#" class="nav-item">
+        🏠
+        <span>Home</span>
+      </a>
+      <a href="#" class="nav-item">
+        🔍
+        <span>Explore</span>
+      </a>
+      <a href="#" class="nav-item">
+        💬
+        <span>Messages</span>
+      </a>
+      <a href="#" class="nav-item">
+        ⚙️
+        <span>Settings</span>
+      </a>
+    </div>
+
+    <div class="main-container">
+      <div class="post-form">
+        <div class="post-form-header">
+          <img
+            src="/api/placeholder/40/40"
+            alt="Profile"
+            class="profile-pic"
+            id="postFormProfilePic"
+          />
+          <textarea
+            class="post-input"
+            placeholder="What's happening?"
+          ></textarea>
+        </div>
+        <div class="media-preview"></div>
+        <div class="button-group">
+          <input type="file" class="file-input" accept="image/*,video/*" />
+          <button class="upload-btn">📷 Media</button>
+          <button class="post-btn" disabled>Post</button>
+        </div>
+      </div>
+
+      <div class="posts-container">
+        <!-- Posts will be added here dynamically -->
+      </div>
+    </div>
+
+    <div class="profile-modal">
+      <div class="profile-modal-content">
+        <div class="profile-modal-header">
+          <h2>Update Profile Picture</h2>
+          <button class="close-modal">×</button>
+        </div>
+        <img
+          src="unknown-person-neon-icon-in-line-style-vector-47168497.jpg"
+          alt="Profile Preview"
+          class="profile-preview"
+          id="profilePreview"
+        />
+        <input
+          type="file"
+          id="profilePicInput"
+          accept="image/*"
+          style="display: none"
+        />
+        <button class="change-photo-btn">Choose New Photo</button>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const postInput = document.querySelector(".post-input");
+        const fileInput = document.querySelector(".file-input");
+        const uploadBtn = document.querySelector(".upload-btn");
+        const postBtn = document.querySelector(".post-btn");
+        const mediaPreview = document.querySelector(".media-preview");
+        const postsContainer = document.querySelector(".posts-container");
+        const profileModal = document.querySelector(".profile-modal");
+        const closeModal = document.querySelector(".close-modal");
+        const profilePics = document.querySelectorAll(".profile-pic");
+        const profilePicInput = document.getElementById("profilePicInput");
+        const profilePreview = document.getElementById("profilePreview");
+        const changePhotoBtn = document.querySelector(".change-photo-btn");
+
+        let selectedFile = null;
+        let userProfilePicture = "/api/placeholder/100/100";
+
+        // Enable/disable post button based on content
+        postInput.addEventListener("input", () => {
+          postBtn.disabled = postInput.value.trim() === "" && !selectedFile;
+        });
+
+        // Handle file upload for posts
+        uploadBtn.addEventListener("click", () => {
+          fileInput.click();
+        });
+
+        fileInput.addEventListener("change", (e) => {
+          const file = e.target.files[0];
+          if (file) {
+            selectedFile = file;
+            showMediaPreview(file);
+            postBtn.disabled = false;
+          }
+        });
+
+        // Show media preview
+        function showMediaPreview(file) {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            mediaPreview.style.display = "block";
+            const isImage = file.type.startsWith("image/");
+            mediaPreview.innerHTML = `
+                        ${
+                          isImage
+                            ? `<img src="${e.target.result}" alt="Preview">`
+                            : `<video src="${e.target.result}" controls></video>`
+                        }
+                        <button class="remove-media">×</button>
+                    `;
+
+            // Add remove media handler
+            mediaPreview
+              .querySelector(".remove-media")
+              .addEventListener("click", () => {
+                mediaPreview.style.display = "none";
+                mediaPreview.innerHTML = "";
+                selectedFile = null;
+                postBtn.disabled = postInput.value.trim() === "";
+              });
+          };
+          reader.readAsDataURL(file);
+        }
+
+        // Handle post creation
+        postBtn.addEventListener("click", () => {
+          const content = postInput.value.trim();
+          if (content || selectedFile) {
+            createPost(content, selectedFile);
+            postInput.value = "";
+            mediaPreview.style.display = "none";
+            mediaPreview.innerHTML = "";
+            selectedFile = null;
+            postBtn.disabled = true;
+          }
+        });
+
+        // Create new post
+        function createPost(content, mediaFile) {
+          const post = document.createElement("div");
+          post.className = "post";
+
+          const timestamp = new Date().toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+
+          const postHTML = `
+<div class="post-user-info">
+    <img src="${userProfilePicture}" alt="Profile" class="profile-pic">
+    <div class="post-username">AL FANGKY 
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-circle" viewBox="0 0 16 16" style="color: var(--primary-color); margin-left: 0.2rem;">
+            <path d="M8 0a8 8 0 1 0 8 8A8 8 0 0 0 8 0zm3.354 5.354a.5.5 0 0 1 0 .708L7.5 10.207 4.646 7.354a.5.5 0 1 1 .708-.708L7.5 8.793l3.146-3.147a.5.5 0 0 1 .708 0z"/>
+        </svg>
+    </div>
+    <div class="post-timestamp">${timestamp}</div>
+</div>
+<div class="post-content">${content}</div>
+${mediaFile ? '<div class="post-media"></div>' : ""}
+<div class="post-actions">
+    <div class="action-btn" data-action="like">
+        🤍 <span>Like</span>
+    </div>
+    <div class="action-btn" data-action="comment">
+        💬 <span>Comment</span>
+    </div>
+    <div class="action-btn" data-action="share">
+        🔄 <span>Share</span>
+    </div>
+</div>
+`;
+
+          post.innerHTML = postHTML;
+
+          if (mediaFile) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+              const mediaContainer = post.querySelector(".post-media");
+              if (mediaFile.type.startsWith("image/")) {
+                mediaContainer.innerHTML = `<img src="${e.target.result}" alt="Post media">`;
+              } else if (mediaFile.type.startsWith("video/")) {
+                mediaContainer.innerHTML = `<video src="${e.target.result}" controls></video>`;
+              }
+            };
+            reader.readAsDataURL(mediaFile);
+          }
+
+          // Add interaction handlers
+          const likeBtn = post.querySelector('[data-action="like"]');
+          let liked = false;
+          likeBtn.addEventListener("click", () => {
+            liked = !liked;
+            likeBtn.innerHTML = `${liked ? "❤️" : "🤍"} <span>${
+              liked ? "Liked" : "Like"
+            }</span>`;
+            likeBtn.classList.toggle("liked");
+          });
+
+          // Add comment interaction
+          const commentBtn = post.querySelector('[data-action="comment"]');
+          commentBtn.addEventListener("click", () => {
+            alert("Comment feature coming soon!");
+          });
+
+          // Add share interaction
+          const shareBtn = post.querySelector('[data-action="share"]');
+          shareBtn.addEventListener("click", () => {
+            alert("Share feature coming soon!");
+          });
+
+          postsContainer.insertBefore(post, postsContainer.firstChild);
+        }
+
+        // Profile picture update functionality
+        profilePics.forEach((pic) => {
+          pic.addEventListener("click", () => {
+            profileModal.style.display = "flex";
+          });
+        });
+
+        closeModal.addEventListener("click", () => {
+          profileModal.style.display = "none";
+        });
+
+        profileModal.addEventListener("click", (e) => {
+          if (e.target === profileModal) {
+            profileModal.style.display = "none";
+          }
+        });
+
+        changePhotoBtn.addEventListener("click", () => {
+          profilePicInput.click();
+        });
+
+        profilePicInput.addEventListener("change", (e) => {
+          const file = e.target.files[0];
+          if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+              userProfilePicture = e.target.result;
+              profilePreview.src = userProfilePicture;
+              profilePics.forEach((pic) => {
+                pic.src = userProfilePicture;
+              });
+            };
+            reader.readAsDataURL(file);
+          }
+        });
+
+        // Create some initial posts
+        createPost(
+          "Hello everyone! This is my first post on SocialApp! 👋",
+          null
+        );
+        createPost("Check out this amazing view! 🌄", null);
+
+        // Handle post input auto-resize
+        postInput.addEventListener("input", function () {
+          this.style.height = "auto";
+          this.style.height = this.scrollHeight + "px";
+        });
+
+        // Add keyboard shortcut for posting (Ctrl/Cmd + Enter)
+        postInput.addEventListener("keydown", (e) => {
+          if (
+            (e.ctrlKey || e.metaKey) &&
+            e.key === "Enter" &&
+            !postBtn.disabled
+          ) {
+            postBtn.click();
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
